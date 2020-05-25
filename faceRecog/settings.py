@@ -76,7 +76,7 @@ WSGI_APPLICATION = 'faceRecog.wsgi.application'
 
 DATABASES = {
     'default':{
-        'ENGINE': 'django.db.backends.mysql',
+        'ENGINE': 'django.db.backends.sqlite3',# use this in case of using sqlite3 as database for small scale applications else change this line
         'NAME': 'django_project',
         'USER': 'root',
         'PASSWORD': 'root',
@@ -110,7 +110,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'IST'
 
 USE_I18N = True
 
