@@ -16,7 +16,7 @@ from sklearn.metrics import confusion_matrix
 import matplotlib.pyplot as plt
 import pickle
 
-from settings import BASE_DIR
+from .settings import BASE_DIR
 # Create your views here.
 def index(request):
     return render(request, 'index.html')
@@ -26,8 +26,8 @@ def errorImg(request):
 def create_dataset(request):
     #print request.POST
     userId = request.POST['userId']
-    print cv2.__version__
-    # Detect face
+    print (cv2.__version__)
+    ## Detect-face
     #Creating a cascade image classifier
     faceDetect = cv2.CascadeClassifier(BASE_DIR+'/ml/haarcascade_frontalface_default.xml')
     #camture images from the webcam and process and detect the face
@@ -86,24 +86,23 @@ def create_dataset(request):
     return redirect('/')
 
 def trainer(request):
-    '''
-        In trainer.py we have to get all the samples from the dataset folder,
-        for the trainer to recognize which id number is for which face.
+    
+#In trainer.py we have to get all the samples from the dataset folder,
+# # for the trainer to recognize which id number is for which face.
+#for that we need to extract all the relative path
+#i.e. dataset/user.1.1.jpg, dataset/user.1.2.jpg, dataset/user.1.3.jpg
+#for this python has a library called os
 
-        for that we need to extract all the relative path
-        i.e. dataset/user.1.1.jpg, dataset/user.1.2.jpg, dataset/user.1.3.jpg
-        for this python has a library called os
-    '''
-    import os
-    from PIL import Image
+ import os
+ from PIL import Image
 
     #Creating a recognizer to train
-    recognizer = cv2.face.LBPHFaceRecognizer_create()
+ recognizer = cv2.face.LBPHFaceRecognizer_create()
     #Path of the samples
-    path = BASE_DIR+'/ml/dataset'
+ path = BASE_DIR+'/ml/dataset'
 
     # To get all the images, we need corresponing id
-    def getImagesWithID(path):
+ def getImagesWithID(path):
         # create a list for the path for all the images that is available in the folder
         # from the path(dataset folder) this is listing all the directories and it is fetching the directories from each and every pictures
         # And putting them in 'f' and join method is appending the f(file name) to the path with the '/'
@@ -134,17 +133,16 @@ def trainer(request):
         return np.array(Ids), np.array(faces)
 
     # Fetching ids and faces
-    ids, faces = getImagesWithID(path)
+ ids, faces = getImagesWithID(path)
 
     #Training the recognizer
     # For that we need face samples and corresponding labels
-    recognizer.train(faces, ids)
+ recognizer.train(faces, ids)
 
     # Save the recogzier state so that we can access it later
-    recognizer.save(BASE_DIR+'/ml/recognizer/trainingData.yml')
-    cv2.destroyAllWindows()
-
-    return redirect('/')
+ recognizer.save(BASE_DIR+'/ml/recognizer/trainingData.yml')
+ cv2.destroyAllWindows() 
+ return redirect('/')
 
 
 def detect(request):
@@ -152,7 +150,7 @@ def detect(request):
 
     cam = cv2.VideoCapture(0)
     # creating recognizer
-    rec = cv2.face.LBPHFaceRecognizer_create();
+    rec = cv2.face.LBPHFaceRecognizer_create()
     # loading the training data
     rec.read(BASE_DIR+'/ml/recognizer/trainingData.yml')
     getId = 0
@@ -195,7 +193,7 @@ def eigenTrain(request):
 
     # Fetching training and testing dataset along with their image resolution(h,w)
     ids, faces, h, w= df.getImagesWithID(path)
-    print 'features'+str(faces.shape[1])
+    print ('features'+str(faces.shape[1]))
     # Spliting training and testing dataset
     X_train, X_test, y_train, y_test = train_test_split(faces, ids, test_size=0.25, random_state=42)
     #print ">>>>>>>>>>>>>>> "+str(y_test.size)
@@ -330,6 +328,6 @@ def detectImage(request):
 
     pred = svm_model.predict(img_pca)
     print(svm_model.best_estimator_)
-    print pred[0]
+    print (pred[0])
 
     return redirect('/records/details/'+str(pred[0]))
